@@ -1,0 +1,84 @@
+local IceLibrary = {}
+IceLibrary.__index = IceLibrary
+
+function IceLibrary:CreateWindow(titleText)
+	local player = game:GetService("Players").LocalPlayer
+	local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+	gui.Name = "IceLibrary"
+	gui.ResetOnSpawn = false
+	gui.IgnoreGuiInset = true
+
+	local mainFrame = Instance.new("Frame", gui)
+	mainFrame.Name = "MainFrame"
+	mainFrame.Size = UDim2.new(0, 400, 0, 300)
+	mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+	mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+	mainFrame.BorderSizePixel = 0
+	mainFrame.Active = true
+	mainFrame.Draggable = true
+
+	local title = Instance.new("TextLabel", mainFrame)
+	title.Size = UDim2.new(1, 0, 0, 30)
+	title.BackgroundTransparency = 1
+	title.Text = titleText or "Ice Library"
+	title.TextColor3 = Color3.fromRGB(255, 255, 255)
+	title.Font = Enum.Font.SourceSansBold
+	title.TextScaled = true
+
+	local tabBar = Instance.new("Frame", mainFrame)
+	tabBar.Size = UDim2.new(1, 0, 0, 30)
+	tabBar.Position = UDim2.new(0, 0, 0, 30)
+	tabBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	tabBar.BorderSizePixel = 0
+
+	local contentFrame = Instance.new("Frame", mainFrame)
+	contentFrame.Size = UDim2.new(1, 0, 1, -60)
+	contentFrame.Position = UDim2.new(0, 0, 0, 60)
+	contentFrame.BackgroundTransparency = 1
+
+	local tabs = {}
+	local buttons = {}
+
+	local function SwitchTab(name)
+		for tabName, frame in pairs(tabs) do
+			frame.Visible = (tabName == name)
+		end
+		for tabName, button in pairs(buttons) do
+			button.TextColor3 = (tabName == name) and Color3.fromRGB(0, 255, 255) or Color3.fromRGB(255, 255, 255)
+		end
+	end
+
+	local window = {}
+	function window:CreateTab(name)
+		local tab = Instance.new("Frame", contentFrame)
+		tab.Name = name
+		tab.Size = UDim2.new(1, 0, 1, 0)
+		tab.BackgroundTransparency = 1
+		tab.Visible = false
+		tabs[name] = tab
+
+		local button = Instance.new("TextButton", tabBar)
+		button.Size = UDim2.new(0, 100, 1, 0)
+		button.Position = UDim2.new(#buttons, 0, 0, 0)
+		button.BackgroundTransparency = 1
+		button.Text = name
+		button.TextColor3 = Color3.fromRGB(255, 255, 255)
+		button.Font = Enum.Font.SourceSans
+		button.TextScaled = true
+		buttons[name] = button
+
+		button.MouseButton1Click:Connect(function()
+			SwitchTab(name)
+		end)
+
+		if #buttons == 1 then
+			SwitchTab(name)
+		end
+
+		return tab
+	end
+
+	return window
+end
+
+return IceLibrary
